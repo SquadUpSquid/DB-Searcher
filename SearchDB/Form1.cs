@@ -219,22 +219,59 @@ namespace SearchDB
 
                     string cellValue = row[column].ToString();
 
-                    //if the row contains the search term make should add true 
-                    if (searchTerms.Any(term => cellValue.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))
+                    //Check if any search term matches the cell value using wildcards
+                    foreach (string searchTerm in searchTerms) ///new line
                     {
-                        shouldAddRow = true;
+                        //if the row contains the search term make should add true 
+                        if (IsWildcardMatch(cellValue, searchTerm))//(searchTerms.Any(term => cellValue.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            shouldAddRow = true;
+                            break;
+                        }
+                    }
+                    if (shouldAddRow)
+                    {
                         break;
                     }
                 }
-                //print the row if it contains search term
-                if (shouldAddRow)
-                {
-                    filteredTable.Rows.Add(row.ItemArray);
 
+                try
+                {
+                    Wait(1);
+                    //print the row if it contains search term
+                    if (shouldAddRow)
+                    {
+                        filteredTable.Rows.Add(row.ItemArray);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message + Environment.NewLine + ex.TargetSite
+                        + Environment.NewLine + ex.HResult + Environment.NewLine + ex.Data);
                 }
             }
             return filteredTable;
         }
+
+
+
+        private bool IsWildcardMatch(string value, string searchTerm) ///new line
+        {
+            //Convert wildcard search term to a regular expression pattern
+            string pattern = WildcardToRegex(searchTerm);
+            // check if the value matches the regular expression pattern
+            return Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
+        }
+
+        private string WildcardToRegex(string wildcard) ///new line
+        {
+            //convert wildcard to regular expression pattern
+            return "^" + Regex.Escape(wildcard)
+                                .Replace("\\*", ".*") //replace '*' with '.*' to match any number of characters
+                                .Replace("\\?", ".") //replace '?' with '.' to match any single character
+                        + "$";
+        }
+
 
 
 
