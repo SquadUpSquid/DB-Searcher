@@ -237,7 +237,6 @@ namespace SearchDB
 
                 try
                 {
-                    Wait(1);
                     //print the row if it contains search term
                     if (shouldAddRow)
                     {
