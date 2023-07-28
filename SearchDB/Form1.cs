@@ -52,8 +52,10 @@ namespace SearchDB
 
 
             // Connection string to the SQL Server/DB
-            string connectionString = "Data Source=R520SANDBOXSVR;Initial Catalog=ps_erdb;Integrated Security=True;"; ///possibly make the 'Data Source' a user input???
+            string connectionString = "Data Source=10.101.93.61,3300;Initial Catalog='LSS PT Snapshot';Integrated Security=True;"; ///possibly make the 'Data Source' a user input???
 
+            ///TEST CONNECTION///Data Source=R520SANDBOXSVR;Initial Catalog=ps_erdb;Integrated Security=True;///;Network Library=DBMSSOCN
+            
             // File directory initialzation and parameters
             SaveFileDialog saveFileDialog1 = new SaveFileDialog
             {
@@ -280,7 +282,7 @@ namespace SearchDB
             List<string> tables = new List<string>();
             //command to grab all of the table names in the database
             using (SqlCommand command = new SqlCommand("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' " +
-                    "AND TABLE_CATALOG = 'ps_erdb' ORDER BY TABLE_NAME ASC", connection))
+                    "AND TABLE_CATALOG = 'LSS PT Snapshot' ORDER BY TABLE_NAME ASC", connection))
             {
                 SqlDataReader reader = command.ExecuteReader();
 
