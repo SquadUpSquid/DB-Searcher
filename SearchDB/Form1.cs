@@ -108,7 +108,7 @@ namespace SearchDB
                         foreach (var tableName in tables)
                         {
 
-                                                        //skip massive/redundant tables 
+                            //skip massive/redundant tables 
                             ///idk any other way to do it
                             if (tableName.IndexOf("tracking", StringComparison.OrdinalIgnoreCase) >= 0 )
                             {
