@@ -47,7 +47,7 @@ namespace SearchDB
 
         }
 
-        private void SearchDB()
+        private async void SearchDB()
         {
 
 
@@ -85,9 +85,9 @@ namespace SearchDB
                 {
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
-                        connection.Open();
+                        await connection.OpenAsync();
                         // Get the list of table names out of the DB
-                        var tables = GetTableNames(connection);
+                        var tables = await GetTableNamesAsync(connection);
 
                         //Progress bar setup
                         int totalTables = tables.Count; ///max should be totalTables but it's being weird 
@@ -107,6 +107,63 @@ namespace SearchDB
                         // Iterate through each table
                         foreach (var tableName in tables)
                         {
+
+                                                        //skip massive/redundant tables 
+                            ///idk any other way to do it
+                            if (tableName.IndexOf("tracking", StringComparison.OrdinalIgnoreCase) >= 0 )
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("track", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("displaychangesstats", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("definitionidentitytable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("instancemetadatachangestable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("identityownertable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("instancepromotedpropertiestable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("instancestable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("keystable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("lockownerstable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("runnableinstancestable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("servicedeploymentstable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+                            if (tableName.IndexOf("sqlworkflowinstancestoreversiontable", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                continue;
+                            };
+
+
                             //progress bar moving along with the program
                             currentTableIndex++;
                             progress = (currentTableIndex * 100 / totalTables);
@@ -169,6 +226,13 @@ namespace SearchDB
 
                                 reader.Close();
                             }
+                            tablesProcessed++;
+                                //Save the file at checkpoint intervals
+                                if (tablesProcessed % CheckpointInterval == 0)
+                                {
+                                    SaveWorkbook(workbook, outputFilePath);
+                                    ///workbook.SaveAs(outputFilePath);
+                                }
                         }
                         Wait(1000);
                         // Saves the workbook in the filePath the user chose
@@ -198,7 +262,20 @@ namespace SearchDB
             }
         }
 
+        //Checkpoint interval variables 
+        private const int CheckpointInterval = 1;
 
+        private void SaveWorkbook(Workbook workbook, string outputFilePath)
+        {
+            try
+            {
+                workbook.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while saving the workbook: " + ex.Message, "Error");
+            }
+        }
 
 
 
@@ -277,16 +354,16 @@ namespace SearchDB
 
 
         // Looks for the list of tableNames in the database
-        static List<string> GetTableNames(SqlConnection connection)
+        private async Task<List<string>> GetTableNamesAsync(SqlConnection connection)
         {
             List<string> tables = new List<string>();
             //command to grab all of the table names in the database
             using (SqlCommand command = new SqlCommand("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' " +
                     "AND TABLE_CATALOG = 'LSS PT Snapshot' ORDER BY TABLE_NAME ASC", connection))
             {
-                SqlDataReader reader = command.ExecuteReader();
+                SqlDataReader reader = await command.ExecuteReaderAsync();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     string tableName = reader.GetString(0);
                     tables.Add(tableName);
