@@ -423,6 +423,21 @@ namespace SearchDB
                 System.Windows.Forms.Application.DoEvents();
         }
 
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            //show help messages
+            string helpMessage = "Welcome to the SearchDB Help Menu!!\n\n" +
+                                "1. Enter the search term(s) in the search Box.\n" +
+                                "2. Click the Search button to start the search.\n" +
+                                "3. Choose a location to save the search results.\n" +
+                                "4. Wait for the search to complete and the file to be saved.\n" +
+                                "5. You can monitor the progress using the progress bar.\n\n\n" + 
+                                "NOTE: If you see the program as 'Not Respinding', it is still working do not close program.\n" + 
+                                "NOTE: If the progress bar isn't moving, it is still working do not close the program. ";
+
+            MessageBox.Show(helpMessage, "Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
     }   
     
 }
