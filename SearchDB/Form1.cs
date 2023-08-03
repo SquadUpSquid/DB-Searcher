@@ -30,7 +30,9 @@ namespace SearchDB
 
         private void SearchButton_Click(object sender, EventArgs e)
         {
-            SearchDB();
+              SearchDB();
+            //hide button when clicked
+            searchButton.Visible = false;
         }
         private void Label1_Click(object sender, EventArgs e)
         {
@@ -101,7 +103,7 @@ namespace SearchDB
                             Value = progress
                         };
                         Controls.Add(progressBar);
-
+                        int tablesProcessed = 0;
 
 
                         // Iterate through each table
@@ -163,14 +165,13 @@ namespace SearchDB
                                 continue;
                             };
 
+                            // Query the 'current' table
+                            string query = $"SELECT * FROM {tableName}";
 
                             //progress bar moving along with the program
                             currentTableIndex++;
                             progress = (currentTableIndex * 100 / totalTables);
                             progressBar.Value = progress;
-
-                            // Query the 'current' table
-                            string query = $"SELECT * FROM {tableName}";
 
                             // Execute that query and retrieve the data reader
                             using (SqlCommand command = new SqlCommand(query, connection))
@@ -194,7 +195,7 @@ namespace SearchDB
                                     // Write the header row to the worksheet (i.e. column names)
                                     for (int i = 0; i < filteredTable.Columns.Count; i++)
                                     {
-                                        Wait(1);
+                                        //Wait(1);
                                         ws2.Cells[1, i + 1].Value = filteredTable.Columns[i].ColumnName;
                                     }
 
@@ -206,7 +207,7 @@ namespace SearchDB
                                         {
                                             for (int col = 0; col < filteredTable.Columns.Count; col++)
                                             {
-                                                Wait(1);
+                                                //Wait(1);
                                                 if (filteredTable.Rows[row][col].ToString().Contains("0x"))
                                                 {
                                                     MessageBox.Show(filteredTable.Rows[row][col].ToString());
@@ -234,7 +235,7 @@ namespace SearchDB
                                     ///workbook.SaveAs(outputFilePath);
                                 }
                         }
-                        Wait(1000);
+                        Wait(10);
                         // Saves the workbook in the filePath the user chose
                         workbook.SaveAs(outputFilePath);
                         workbook.Close();
@@ -243,6 +244,7 @@ namespace SearchDB
                         MessageBox.Show("File saved to your destination.");
                         //hides the progress bar when the program is complete
                         Controls.Remove(progressBar);
+                        searchButton.Visible = true;
                     }
                 }
                 catch (Exception ex)
@@ -299,14 +301,10 @@ namespace SearchDB
                     string cellValue = row[column].ToString();
 
                     //Check if any search term matches the cell value using wildcards
-                    foreach (string searchTerm in searchTerms) ///new line
+                    if (searchTerms.Any(searchTerm => IsWildcardMatch(cellValue, searchTerm)))
                     {
-                        //if the row contains the search term make should add true 
-                        if (IsWildcardMatch(cellValue, searchTerm))//(searchTerms.Any(term => cellValue.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            shouldAddRow = true;
-                            break;
-                        }
+                        shouldAddRow = true;
+                        break;
                     }
                     if (shouldAddRow)
                     {
@@ -423,17 +421,19 @@ namespace SearchDB
                 System.Windows.Forms.Application.DoEvents();
         }
 
-        private void helpButton_Click(object sender, EventArgs e)
+        private void helpButton_Click_1(object sender, EventArgs e)
         {
             //show help messages
             string helpMessage = "Welcome to the SearchDB Help Menu!!\n\n" +
                                 "1. Enter the search term(s) in the search Box.\n" +
-                                "2. Click the Search button to start the search.\n" +
-                                "3. Choose a location to save the search results.\n" +
-                                "4. Wait for the search to complete and the file to be saved.\n" +
-                                "5. You can monitor the progress using the progress bar.\n\n\n" + 
-                                "NOTE: If you see the program as 'Not Respinding', it is still working do not close program.\n" + 
-                                "NOTE: If the progress bar isn't moving, it is still working do not close the program. ";
+                                "2. When using multiple search terms, deliminate them with a comma(no space after).\n" +
+                                "3. Click the Search button to start the search.\n" +
+                                "4. Choose a location to save the search results.\n" +
+                                "5. Wait for the search to complete and the file to be saved.\n" +
+                                "6. You can monitor the progress using the progress bar.\n\n\n" +
+                                "NOTE: \n-- If you see the program as 'Not Respinding', it is still working do not close program.\n" +
+                                "-- If the progress bar isn't moving, it is still working do not close the program.\n" + 
+                                "-- If a message box appears asking to replace 'Book1', click yes to replace.\n";
 
             MessageBox.Show(helpMessage, "Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
