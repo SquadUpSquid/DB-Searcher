@@ -81,6 +81,17 @@
             // 
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveFileDialog1_FileOk);
             // 
+            // helpButton
+            // 
+            this.helpButton.BackColor = System.Drawing.Color.Gainsboro;
+            this.helpButton.Location = new System.Drawing.Point(700, 21);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(53, 31);
+            this.helpButton.TabIndex = 4;
+            this.helpButton.Text = "Help";
+            this.helpButton.UseVisualStyleBackColor = false;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
