@@ -54,7 +54,7 @@ namespace SearchDB
 
 
             // Connection string to the SQL Server/DB
-            string connectionString = "Data Source=10.101.93.61,3300;Initial Catalog='LSS PT Snapshot';Integrated Security=True;"; ///possibly make the 'Data Source' a user input???
+            string connectionString = "Data Source=xxxxxxxxxxx;Initial Catalog='LSS PT Snapshot';Integrated Security=True;"; ///possibly make the 'Data Source' a user input???
 
             ///TEST CONNECTION///Data Source=R520SANDBOXSVR;Initial Catalog=ps_erdb;Integrated Security=True;///;Network Library=DBMSSOCN
             
